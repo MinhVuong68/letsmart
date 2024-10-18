@@ -1,0 +1,14 @@
+{
+    "plugins": [
+      ["module-resolver", {
+        "root": ["./src"],
+        "alias": {
+          "@api": "./src/apis",
+          "@component": "./src/components",
+          "@page": "./src/pages",
+          "@layout": "./src/layout",
+          "@source": "./src"
+        }
+      }]
+    ]
+  }

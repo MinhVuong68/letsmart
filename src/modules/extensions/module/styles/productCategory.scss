@@ -1,0 +1,29 @@
+.section-products__layout-default {
+  background-color: #F4F2F0;
+  margin-top: 35px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+
+
+.section-products__layout-default .btn-more,
+.section-products__layout-1 .btn-more {
+  background-color: #F2A243;
+  text-transform: unset;
+  font-weight: normal;
+  padding: 8px 31px;
+  border-radius: 16px;
+}
+
+
+@media(max-width: 576px) {
+  .btn-more {
+
+    border-radius: 5px
+  }
+
+  .wrapper-btn-more {
+    padding: 0 20px
+  }
+}

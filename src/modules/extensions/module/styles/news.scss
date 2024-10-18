@@ -1,0 +1,21 @@
+.section-content {
+    padding: 0 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center
+}
+
+
+@media(max-width: 992px) {
+    .section-content {
+        padding: 10px 20px
+    }
+}
+
+@media(max-width: 576px) {
+    .section-news-item .btn-detail {
+        width: 100%;
+        margin-top: 10px !important;
+        border-radius: 5px
+    }
+}

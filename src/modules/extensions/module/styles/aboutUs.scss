@@ -1,0 +1,22 @@
+.wrap-modue-aboutus {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+
+.wrap-modue-aboutus .inner-content {
+    padding: 25px
+}
+@media(max-width: 992px) {
+    .wrap-modue-aboutus {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+    .wrap-modue-aboutus .btn-learn-more {
+        width: 100%
+    }
+
+    .wrap-modue-aboutus .inner-content {
+        padding: 25px
+    }
+}
