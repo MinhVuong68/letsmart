@@ -4,7 +4,7 @@ const ProductItem = (props) => {
     const product = props.product
     return (
         <div class="postion-relative w-100">
-            <Link href="">
+            <Link to={product.link}>
                 <img src={product.image} class="w-100 lazyload rounded" style={{ aspectRatio: 1 }} alt="" />
                 <div class="text-center d-flex flex-column mt-2 item-info">
                     <div class="px-2">
