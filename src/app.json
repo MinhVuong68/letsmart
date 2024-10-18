@@ -1,5 +1,5 @@
 {
     "ROUTE_PREFIX_PATH": "",
-    "SERVER": "http://127.0.0.1:8000",
+    "SERVER": "https://tenant-670664e14e3de.baohanhaz.com",
     "REALTIMESERVER": "https://totori.vn:6009/"
 }
