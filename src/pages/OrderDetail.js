@@ -8,15 +8,6 @@ const OrderDetail = () => {
     const [toado, setToado] = useState({})
     const navigate = useNavigate()
 
-    useEffect(() => {
-        if (boxRef.current) {
-            const rect = boxRef.current.getBoundingClientRect(); // Lấy tọa độ
-            const centerX = rect.left + rect.width / 2; // Tính toán tọa độ trung tâm X
-            const centerY = rect.top + rect.height / 2; // Tính toán tọa độ trung tâm Y
-            setToado({ centerX, centerY })
-        }
-    }, []);
-
     const pageVariants = {
         initial: {
             opacity: 0,          // Bắt đầu mờ
