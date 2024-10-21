@@ -281,7 +281,8 @@ const OrderDetail = React.forwardRef((props, ref) => {
                                     <div className='form-group mb-3'>
 
                                         <div className='d-flex align-items-center justify-content-center'>
-                                            Quantity <i className="fas fa-sort-down ms-1"></i>
+                                            {/* Quantity <i className="fas fa-sort-down ms-1"></i> */}
+                                            Số lượng
                                         </div>
                                         <input type='number' className='form-control mt-2' />
                                     </div>
