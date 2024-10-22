@@ -224,11 +224,27 @@ const OrderDetail = React.forwardRef((props, ref) => {
 
     const showModal = (data) => {
         setData(data)
+
+
+        const option = data?.options.reduce((acc, optionItem) => {
+            if (optionItem.product_option_value.length > 0) {
+                acc[optionItem.product_option_id] = optionItem.product_option_value[0].product_option_value_id.toString();
+            }
+            return acc;
+        }, {});
         setFormData({
             id: data.id,
             quantity: 1,
-            price: data.price
+            price: data.price, 
+            option: option
         })
+
+
+        // setFormData({
+        //     id: data.id,
+        //     quantity: 1,
+        //     price: data.price
+        // })
         setIsModalOpen(true)
     }
 
@@ -336,19 +352,19 @@ const OrderDetail = React.forwardRef((props, ref) => {
 
     }, [JSON.stringify(formData.option)])
 
-    useEffect(() => {
-        
-        if (data?.options) {
-            const option = data?.options.reduce((acc, optionItem) => {
-                if (optionItem.product_option_value.length > 0) {
-                    acc[optionItem.product_option_id] = optionItem.product_option_value[0].product_option_value_id.toString();
-                }
-                return acc;
-            }, {});
-            setFormData({ ...formData, option: option })
-        }
+    // useEffect(() => {
 
-    }, [data.options])
+    //     if (data?.options) {
+    //         const option = data?.options.reduce((acc, optionItem) => {
+    //             if (optionItem.product_option_value.length > 0) {
+    //                 acc[optionItem.product_option_id] = optionItem.product_option_value[0].product_option_value_id.toString();
+    //             }
+    //             return acc;
+    //         }, {});
+    //         setFormData({ ...formData, option: option })
+    //     }
+
+    // }, [data.options])
 
     console.log('formData:', formData);
 
