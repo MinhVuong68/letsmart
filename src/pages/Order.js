@@ -151,7 +151,7 @@ const Order = () => {
 const ProductCard = (props) => {
     const { info, onClick } = props
     return (
-        <div className='postion-relative'>
+        <div className='position-relative'>
 
             <Link onClick={onClick}>
                 <div
