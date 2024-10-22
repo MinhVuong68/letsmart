@@ -7,10 +7,11 @@ import { SwiperSlide, Swiper } from 'swiper/react';
 import 'swiper/css';
 import './styles/order.scss'
 import { publicRoute } from '../routes';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Image, Modal } from 'antd';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Card, Image, Modal, Skeleton } from 'antd';
 import { ProductTodos } from '../apis';
-import { CategoryNavigationBar, NoneOfResult, TabCategory } from './components';
+import { CategoryNavigationBar, NoneOfResult, OptionsProduct, TabCategory } from './components';
+import { FormControl, FormGroup, FormLabel } from 'react-bootstrap';
 
 
 const pageVariants = {
@@ -43,26 +44,45 @@ const Order = () => {
 
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState({})
+
     const [result, setResult] = useState({})
 
-    useEffect(() => {
-        const getProductCategoryStructure = async () => {
-            const response = await ProductTodos.getProductCategoryStructure()
-            if (response.length > 0) {
-                setCategory(response[0])
-                setCategories(response)
+    const [categoryLoading, setCategoryLoading] = useState(false)
+    const [productsLoading, setProductsLoading] = useState(true)
+
+    const getProductCategoryStructure = useCallback(
+        async () => {
+            try {
+                setCategoryLoading(true)
+                const response = await ProductTodos.getProductCategoryStructure()
+                if (response.length > 0) {
+                    setCategory(response[0])
+                    setCategories(response)
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setCategoryLoading(false)
             }
         }
-        getProductCategoryStructure()
-    }, [])
+    )
+
 
     const getProductCategoryInfo = async (id) => {
-        const response = await ProductTodos.getProductCategoryInfo(id)
-        setResult(response)
+        try {
+            setProductsLoading(true)
+            const response = await ProductTodos.getProductCategoryInfo(id)
+            setResult(response)
+        } catch (error) {
+            console.log('error:', error);
+        } finally {
+            setProductsLoading(false)
+        }
     }
 
-
-    console.log(result);
+    useEffect(() => {
+        getProductCategoryStructure()
+    }, [])
 
 
 
@@ -78,7 +98,7 @@ const Order = () => {
             <div>
                 <div className='container'>
                     <div className='d-flex justify-content-between py-4'>
-                        {/* <button onClick={() => navigate(-1)} className='border-0 bg-transparent'>Thoát</button> */}
+                        <button onClick={() => navigate(-1)} className='border-0 bg-transparent'>Thoát</button>
                         {/* <Link to={publicRoute.login.path} className='border-0 bg-transparent'>Thoát</Link> */}
                         <div className='d-flex align-items-center'>
                             <span>Tìm kiếm</span>
@@ -88,6 +108,7 @@ const Order = () => {
                 </div>
                 <CategoryNavigationBar
                     data={categories}
+                    loading={categoryLoading}
                     onSelect={async (data) => {
                         setCategory(data)
                         if (data?.children.length == 0) {
@@ -96,25 +117,31 @@ const Order = () => {
                     }}
                 />
                 <TabCategory data={category} getProductCategoryInfo={getProductCategoryInfo} />
-                {result.products?.length > 0 ? (
+                {
                     <div className='container'>
-                        <div className='container--list-product'>
-                            {result.products?.map((product, index) => (
-                                <div className='container--product-cart'>
-                                    <ProductCard key={index} info={product} onClick={() => { orderDetailRef.current?.showModal(product) }} />
-                                </div>
-                            ))}
+                        <div className='container--list-product'>{
+                            productsLoading ? (
+                                Array(3).fill().map((_, index) => (
+                                    <div className='container--product-cart'>
+                                        <ProductCardSkeleton key={index} loading={productsLoading} />
+                                    </div>
+                                ))
+                            ) : (
+                                result.products?.length > 0 ? (
+                                    result.products?.map((product, index) => (
+                                        <div className='container--product-cart'>
+                                            <ProductCard key={index} info={product} onClick={() => { orderDetailRef.current?.showModal(product) }} />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <NoneOfResult />
+                                )
+                            )
+                        }
                         </div>
                     </div>
-
-                ) : (
-
-                    <NoneOfResult />
-                )}
+                }
                 <OrderDetail ref={orderDetailRef} />
-
-
-
             </div>
         </motion.div>
     )
@@ -124,29 +151,69 @@ const Order = () => {
 const ProductCard = (props) => {
     const { info, onClick } = props
     return (
-        <Link onClick={onClick}>
-            <div
-                className="lazyload"
-                style={{
-                    backgroundImage: `url(${info.image})`,
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                    paddingTop: '100%'
-                }}
-            />
-            <div className='p-3'>
-                <span className='fw-bold'>{info.name}</span>
-                <span className='product-grid-item__price price mt-1'>{info.price_format}</span>
-            </div>
-        </Link>
+        <div className='postion-relative'>
+
+            <Link onClick={onClick}>
+                <div
+                    className="lazyload"
+                    style={{
+                        backgroundImage: `url(${info.image})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        paddingTop: '100%'
+                    }}
+                />
+                <div className='p-3'>
+                    <span className='fw-bold'>{info.name}</span>
+                    {info.price ? (
+                        <div>
+                            {
+                                info.special ? (
+                                    <div>
+                                        <del class="old-price small">{info.listed_price_format}</del>
+                                        <span class="fw-bold price ms-1">{info.special_format}</span>
+                                    </div>
+                                ) : (
+                                    <span class="price">{info.price_format}</span>
+                                )
+                            }
+                            {info.price && info.special && (
+                                <div class="text-white d-flex justify-content-center align-items-center ms-2 position-absolute sale_off" style={{ top: '10px', right: '10px' }}>
+                                    {Math.ceil((info.price - info.special) * 100 / info.price)}%
+                                </div>
+                            )
+
+                            }
+
+                        </div>
+                    ) : (
+                        <span class="text-primary">Liên hệ</span>
+                    )}
+                </div>
+            </Link>
+        </div>
 
     )
 }
+
+const ProductCardSkeleton = ({ loading }) => {
+
+    return (
+        <div>
+            <Skeleton.Image style={{ width: '100% !important', height: 150 }} active={loading} loading={loading} />
+            <div className='p-3'>
+                <Skeleton paragraph={{ rows: 1 }} active={loading} />
+            </div>
+        </div>
+    )
+}
+
 
 const OrderDetail = React.forwardRef((props, ref) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [data, setData] = useState({})
+    const [formData, setFormData] = useState({})
 
     const boxCartRef = useRef(null)
     const boxNotiRef = useRef(null)
@@ -157,6 +224,11 @@ const OrderDetail = React.forwardRef((props, ref) => {
 
     const showModal = (data) => {
         setData(data)
+        setFormData({
+            id: data.id,
+            quantity: 1,
+            price: data.price
+        })
         setIsModalOpen(true)
     }
 
@@ -168,7 +240,7 @@ const OrderDetail = React.forwardRef((props, ref) => {
         const cartRect = boxCartRef.current.getBoundingClientRect();
         const notiElement = boxNotiRef.current;
 
-        console.log(cartRect);
+
 
 
         // Lưu trữ thông số ban đầu
@@ -253,6 +325,33 @@ const OrderDetail = React.forwardRef((props, ref) => {
         }, 1000)
     }
 
+    useEffect(() => {
+        const option = Object.values(formData.option ?? [])
+        const model = Object.values(data?.models ?? {}).find((item) => {
+            return JSON.stringify(item.product_option_values) == JSON.stringify(option)
+        })
+        if (model) {
+            setFormData({ ...formData, price: model.price })
+        }
+
+    }, [JSON.stringify(formData.option)])
+
+    useEffect(() => {
+        
+        if (data?.options) {
+            const option = data?.options.reduce((acc, optionItem) => {
+                if (optionItem.product_option_value.length > 0) {
+                    acc[optionItem.product_option_id] = optionItem.product_option_value[0].product_option_value_id.toString();
+                }
+                return acc;
+            }, {});
+            setFormData({ ...formData, option: option })
+        }
+
+    }, [data.options])
+
+    console.log('formData:', formData);
+
     return (
         <Modal
             className='container--order-detail'
@@ -269,22 +368,33 @@ const OrderDetail = React.forwardRef((props, ref) => {
                         <div className='container'>
                             <div className='wrap--btn-back'>
                                 <button className='btn-back' onClick={handleCancel}>
-                                    <i class="fas fa-arrow-left"></i>
+                                    <i className="fas fa-arrow-left"></i>
                                 </button>
-
                             </div>
                             <div className='p-5'>
 
                                 <h2 className='fw-bold'>{data.name}</h2>
-                                <h5 className='price'>{data.price_format}</h5>
+                                <h5 className='price'> {new Intl.NumberFormat().format(formData.price * formData.quantity).replace(/\./g, ',')}đ</h5>
                                 <div className='w-100 container--input-control mb-4'>
                                     <div className='form-group mb-3'>
 
-                                        <div className='d-flex align-items-center justify-content-center'>
-                                            {/* Quantity <i className="fas fa-sort-down ms-1"></i> */}
-                                            Số lượng
-                                        </div>
-                                        <input type='number' className='form-control mt-2' />
+                                        <FormGroup className='mb-3'>
+                                            <FormLabel>Số lượng</FormLabel>
+                                            <FormControl
+                                                value={formData.quantity}
+                                                onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
+                                                type='number'
+                                                min={1}  // Giá trị tối thiểu
+                                                max={100}  // Giá trị tối đa
+                                            />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <OptionsProduct
+                                                data={data.options}
+                                                formData={formData}
+                                                setFormData={setFormData}
+                                            />
+                                        </FormGroup>
                                     </div>
 
                                 </div>

@@ -12,6 +12,13 @@
     background-color: #FFF;
     border-radius: 10px;
     overflow: hidden;
+
+    .ant-skeleton {
+        width: 100% !important;
+    }
+    .ant-skeleton-image {
+        width: 100% !important;
+    }
 }
 
 .product-grid-item__price {
@@ -163,4 +170,14 @@
     padding: 15px 10px;
     border: 1px solid #ccc;
     border-radius: 3px;
+}
+
+
+.options-product {
+    .option-item {
+        cursor: pointer;
+    }
+    .is-focus {
+        border: 2px solid #f38c11
+    }
 }

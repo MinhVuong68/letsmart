@@ -16,6 +16,9 @@ const TabCategory = (props) => {
             setTabsCategory(category.children)
             setTabCategorySelected(category.children[0].id)
         } else {
+            if(category.id) {
+                getProductCategoryInfo(category.id)
+            }
             setTabsCategory([])
             setTabCategorySelected(null)
         }

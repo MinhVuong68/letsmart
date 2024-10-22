@@ -7,6 +7,7 @@ const OrderDetail = () => {
     const boxRef = useRef()
     const [toado, setToado] = useState({})
     const navigate = useNavigate()
+    const [formData, setFormData] = useState({})
 
     const pageVariants = {
         initial: {
