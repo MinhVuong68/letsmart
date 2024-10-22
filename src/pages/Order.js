@@ -97,13 +97,13 @@ const Order = () => {
         >
             <div>
                 <div className='container'>
-                    <div className='d-flex justify-content-between py-4'>
+                    <div className='d-flex py-4'>
                         <button onClick={() => navigate(-1)} className='border-0 bg-transparent'>Thoát</button>
                         {/* <Link to={publicRoute.login.path} className='border-0 bg-transparent'>Thoát</Link> */}
-                        <div className='d-flex align-items-center'>
+                        {/* <div className='d-flex align-items-center'>
                             <span>Tìm kiếm</span>
                             <i className="fas fa-search ms-2"></i>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <CategoryNavigationBar
@@ -224,8 +224,6 @@ const OrderDetail = React.forwardRef((props, ref) => {
 
     const showModal = (data) => {
         setData(data)
-
-
         const option = data?.options.reduce((acc, optionItem) => {
             if (optionItem.product_option_value.length > 0) {
                 acc[optionItem.product_option_id] = optionItem.product_option_value[0].product_option_value_id.toString();
@@ -238,13 +236,6 @@ const OrderDetail = React.forwardRef((props, ref) => {
             price: data.price, 
             option: option
         })
-
-
-        // setFormData({
-        //     id: data.id,
-        //     quantity: 1,
-        //     price: data.price
-        // })
         setIsModalOpen(true)
     }
 
